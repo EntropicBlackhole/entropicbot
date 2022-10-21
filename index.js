@@ -1,5 +1,5 @@
 const jsChessEngine = require('js-chess-engine')
-const Canvas = require('@napi-rs/canvas');
+// const Canvas = require('@napi-rs/canvas');
 const {
 	Client,
 	GatewayIntentBits,
