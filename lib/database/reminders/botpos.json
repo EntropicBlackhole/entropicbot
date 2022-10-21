@@ -1,0 +1,28 @@
+{
+  "main": {
+    "708026434660204625": {
+      "#1": {
+        "message": "test3",
+        "hearted": false
+      },
+      "#2": {
+        "message": "the bees toes",
+        "hearted": false
+      },
+      "#3": {
+        "message": "the bees ankles",
+        "hearted": true
+      },
+      "#4": {
+        "message": "pussy",
+        "hearted": true
+      }
+    }
+  },
+  "config": {
+    "708026434660204625": {
+      "interval": 3600000,
+      "priority": 5
+    }
+  }
+}

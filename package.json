@@ -1,0 +1,20 @@
+{
+  "name": "entropic_bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "node ."
+  },
+  "keywords": [],
+  "author": "EntropicBlackhole",
+  "license": "ISC",
+  "dependencies": {
+    "@napi-rs/canvas": "^0.1.29",
+    "brainly-client": "^0.1.4",
+    "discord.js": "^14.3.0",
+    "js-chess-engine": "^1.0.2",
+    "openai": "^3.0.0",
+    "tictactoe-ai": "^1.0.4"
+  }
+}

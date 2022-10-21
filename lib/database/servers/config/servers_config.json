@@ -1,0 +1,20 @@
+{
+  "1023008971042340905": {
+    "verification": {
+      "verificationCode": "0 gravity",
+      "verificationChannel": "1023038920457470003",
+      "verificationRole": "1023034995239043093",
+      "verifiedMessage": "You're verified! Have fun!",
+      "nonVerifiedMessage": "This is not the verification code, please read the rules and blacklist okay?"
+    }
+  },
+  "1026953388124020806": {
+    "verification": {
+      "verificationCode": "skyhighlights",
+      "verificationChannel": "1026954937755783249",
+      "verificationRole": "1026955695972683777",
+      "verifiedMessage": "You're verified! Have fun!!",
+      "nonVerifiedMessage": "This isn't the verification code, please check the rules and blacklist"
+    }
+  }
+}
