@@ -49,7 +49,7 @@ client.once("ready", () => {
 })
 
 client.on("messageCreate", (message) => {
-	console.log(message.author.username)
+	// console.log(message.author.username)
 	var serverConfig = JSON.parse(fs.readFileSync("./lib/database/servers/config/servers_config.json"))
 
 	if (!([null, undefined, {}].includes(serverConfig[message.guild.id]))) {
