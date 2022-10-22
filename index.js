@@ -1,24 +1,54 @@
 const jsChessEngine = require('js-chess-engine')
-const {
-	Client,
-	GatewayIntentBits,
-	PermissionsBitField,
-	Partials,
+const config = require('./lib/database/bot/config.json');
+const fs = require('node:fs');
+const path = require('node:path');
+const Discord = require('discord.js');
+const client = new Discord.Client({
+	intents: [
+		Discord.GatewayIntentBits.Guilds,
+		Discord.GatewayIntentBits.GuildMessages,
+		Discord.GatewayIntentBits.GuildMembers,
+		Discord.GatewayIntentBits.MessageContent,
+		Discord.GatewayIntentBits.DirectMessages
+	]
+});
+const commands = [];
+const commandsPath = path.join(__dirname, './lib/database/bot/commands');
+const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
+client.commands = new Discord.Collection();
 
-	ActionRowBuilder,
-	AttachmentBuilder,
-	// EmbedBuilder,
-	ButtonBuilder,
-	ButtonStyle,
-	EmbedBuilder,
+// Deploying commands 
+for (const file of commandFiles) {
+	const filePath = path.join(commandsPath, file);
+	const command = require(filePath);
+	commands.push(command.data.toJSON());
+	client.commands.set(command.data.name, command);
+}
+const rest = new Discord.REST({ version: '10' }).setToken(config.token);
+rest.put(Discord.Routes.applicationCommands(config.clientId), { body: commands })
+	.then(data => console.log(`Successfully registered ${data.length} application commands.`))
+	.catch(console.error);
 
-	// ModalBuilder,
-	// TextInputBuilder,
-	// TextinputStyle
-} = require('discord.js');
-const { token, prefix } = require('./config.json')
-const fs = require('fs');
+//Deployed all commands
 
+client.once("ready", () => {
+	console.log(client.user.tag + " is online!");
+});
+
+client.on('interactionCreate', async interaction => {
+	if (!interaction.isChatInputCommand()) return;
+	const command = interaction.client.commands.get(interaction.commandName);
+	if (!command) return;
+	try {
+		await command.execute(interaction, client);
+	} catch (error) {
+		console.error(error);
+		await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+	}
+});
+
+client.login(config.token);
+// ==================
 const pieces = {
 	'k': '\u265A',
 	'q': '\u265B',
@@ -33,23 +63,8 @@ const pieces = {
 	'N': '\u2658',
 	'P': '\u2659'
 }
-const client = new Client({
-	intents: [
-		GatewayIntentBits.Guilds,
-		GatewayIntentBits.GuildMessages,
-		GatewayIntentBits.GuildMembers,
-		GatewayIntentBits.MessageContent,
-		GatewayIntentBits.DirectMessages
-	]
-});
-client.login(token);
-
-client.once("ready", () => {
-	console.log(`${client.user.tag} is online!`);
-})
 
 client.on("messageCreate", (message) => {
-	// console.log(message.author.username)
 	var serverConfig = JSON.parse(fs.readFileSync("./lib/database/servers/config/servers_config.json"))
 
 	if (!([null, undefined, {}].includes(serverConfig[message.guild.id]))) {
@@ -63,7 +78,7 @@ client.on("messageCreate", (message) => {
 		}
 	}
 
-	if (message.author.bot || !message.content.startsWith(prefix)) return;
+	if (message.author.bot || !message.content.startsWith(conprefix)) return;
 	const args = message.content.slice(prefix.length).trim().split(/ +/);
 	const command = args.shift().toLowerCase();
 
@@ -515,19 +530,6 @@ client.on("messageCreate", (message) => {
 	else if (command == 'kill') return message.channel.send("Committing sewer slide").then(() => process.exit());
 })
 
-client.on('interactionCreate', (interaction) => {
-	// if (interaction.customId == 'heartMessageTrue-edit') {
-	// 	interaction.reply('Setting the message to hearted')
-	// 	console.log(item)
-	// }
-	// else if (interaction.customId == 'heartMessageFalse-edit') {
-	// 	interaction.reply('Setting the message to unhearted')
-	// 	console.log(item)
-	// }
-	// else if (interaction.customId == 'color-roles') {
-	// 	interaction.reply("Okay scanning colors and turning them into roles")
-	// }
-})
 
 client.on("guildMemberAdd", (member) => {
 	let channel = member.guild.channels.cache;
