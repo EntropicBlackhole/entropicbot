@@ -1,4 +1,5 @@
 const jsChessEngine = require('js-chess-engine')
+const Canvas = require('@napi-rs/canvas')
 const config = require('./lib/database/bot/config.json');
 const fs = require('node:fs');
 const path = require('node:path');
@@ -43,7 +44,37 @@ client.on('interactionCreate', async interaction => {
 		await command.execute(interaction, client);
 	} catch (error) {
 		console.error(error);
-		await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+		try {
+			const row = new Discord.ActionRowBuilder()
+				.addComponents(
+					new Discord.ButtonBuilder()
+						.setCustomId('show-error')
+						.setLabel('Show error log')
+						.setStyle(Discord.ButtonStyle.Primary),
+				);
+			await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true, components: [row] });
+			client.on('interactionCreate', async interaction => {
+				if (!interaction.isButton()) return;
+				if (interaction.customId == 'show-error') {
+					await interaction.reply({ content: '```' + error + '```', ephemeral: true });
+				}
+			});
+		} catch (e) {
+			const row = new Discord.ActionRowBuilder()
+				.addComponents(
+					new Discord.ButtonBuilder()
+						.setCustomId('show-error')
+						.setLabel('Show error log')
+						.setStyle(Discord.ButtonStyle.Primary),
+				);
+			await interaction.editReply({ content: 'There was an error while executing this command!', ephemeral: true, components: [row] });
+			client.on('interactionCreate', async interaction => {
+				if (!interaction.isButton()) return;
+				if (interaction.customId == 'show-error') {
+					await interaction.reply({ content: '```' + error + '```', ephemeral: true });
+				}
+			});
+		}
 	}
 });
 
@@ -77,8 +108,8 @@ client.on("messageCreate", (message) => {
 			else if (!(message.content.includes(serverConfig[message.guild.id].verification.verificationCode)) && !message.author.bot) return message.channel.send(serverConfig[message.guild.id].verification.nonVerifiedMessage).then(msg => setTimeout(() => msg.delete(), 2000)).then(setTimeout(() => message.delete(), 2000))
 		}
 	}
-
-	if (message.author.bot || !message.content.startsWith(conprefix)) return;
+	return
+	if (message.author.bot || !message.content.startsWith(config.prefix)) return;
 	const args = message.content.slice(prefix.length).trim().split(/ +/);
 	const command = args.shift().toLowerCase();
 
