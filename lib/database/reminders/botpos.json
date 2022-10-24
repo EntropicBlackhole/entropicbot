@@ -1,27 +1,21 @@
 {
-  "main": {
-    "708026434660204625": {
-      "#1": {
-        "message": "test3",
+  "708026434660204625": {
+    "reminders": {
+      "1": {
+        "message": "dick",
         "hearted": false
       },
-      "#2": {
-        "message": "the bees toes",
-        "hearted": false
-      },
-      "#3": {
+      "2": {
         "message": "the bees ankles",
         "hearted": true
       },
-      "#4": {
-        "message": "pussy",
-        "hearted": true
+      "3": {
+        "message": "Hello World",
+        "hearted": false
       }
-    }
-  },
-  "config": {
-    "708026434660204625": {
-      "interval": 3600000,
+    },
+    "config": {
+      "interval": 3,
       "priority": 5
     }
   }

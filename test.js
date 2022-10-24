@@ -1,3 +1,12 @@
+reminders = {
+	reminders: {},
+	config: {
+		interval: 2,
+		priority: 5
+	}
+}
+console.log(Object.keys(reminders.reminders).length)
+/*
 let Weight1 = randomNumber(-4, 4);
 let Weight2 = randomNumber(-4, 4);
 let Weight3 = randomNumber(-4, 4);

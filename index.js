@@ -1,6 +1,7 @@
 const jsChessEngine = require('js-chess-engine')
 const Canvas = require('@napi-rs/canvas')
 const config = require('./lib/database/bot/config.json');
+const functions = require('./lib/database/bot/functions.js')
 const fs = require('node:fs');
 const path = require('node:path');
 const Discord = require('discord.js');
@@ -50,7 +51,7 @@ client.on('interactionCreate', async interaction => {
 					new Discord.ButtonBuilder()
 						.setCustomId('show-error')
 						.setLabel('Show error log')
-						.setStyle(Discord.ButtonStyle.Primary),
+						.setStyle(Discord.ButtonStyle.Danger),
 				);
 			await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true, components: [row] });
 			client.on('interactionCreate', async interaction => {
@@ -65,7 +66,7 @@ client.on('interactionCreate', async interaction => {
 					new Discord.ButtonBuilder()
 						.setCustomId('show-error')
 						.setLabel('Show error log')
-						.setStyle(Discord.ButtonStyle.Primary),
+						.setStyle(Discord.ButtonStyle.Danger),
 				);
 			await interaction.editReply({ content: 'There was an error while executing this command!', ephemeral: true, components: [row] });
 			client.on('interactionCreate', async interaction => {
@@ -79,25 +80,10 @@ client.on('interactionCreate', async interaction => {
 });
 
 client.login(config.token);
-// ==================
-const pieces = {
-	'k': '\u265A',
-	'q': '\u265B',
-	'r': '\u265C',
-	'b': '\u265D',
-	'n': '\u265E',
-	'p': '\u2659',
-	'K': '\u2654',
-	'Q': '\u2655',
-	'R': '\u2656',
-	'B': '\u2657',
-	'N': '\u2658',
-	'P': '\u2659'
-}
 
 client.on("messageCreate", (message) => {
 	var serverConfig = JSON.parse(fs.readFileSync("./lib/database/servers/config/servers_config.json"))
-
+	if (message.content == '$kill') return message.channel.send("Committing sewer slide").then(() => process.exit());
 	if (!([null, undefined, {}].includes(serverConfig[message.guild.id]))) {
 		if (serverConfig[message.guild.id].verification.verificationChannel == message.channel.id) {
 			if (message.content.includes(serverConfig[message.guild.id].verification.verificationCode) && !message.author.bot) {
@@ -561,113 +547,13 @@ client.on("messageCreate", (message) => {
 	else if (command == 'kill') return message.channel.send("Committing sewer slide").then(() => process.exit());
 })
 
-
 client.on("guildMemberAdd", (member) => {
-	let channel = member.guild.channels.cache;
-	let embed = new EmbedBuilder()
+	let embed = new Discord.EmbedBuilder()
 		.setThumbnail(member.guild.iconURL())
-		.addField(`Welcome!`, `Hello, welcome to ${member.guild.name} <@${member.user.id}>!`, true)
-		.addField(`Guild Statistics`, `Server member count: ${member.guild.memberCount}`, true)
-		.setColor(randomColor())
+		.addFields(
+			{ name: `Welcome!`, value: `Hello, welcome to ${member.guild.name} <@${member.user.id}>!`, inline: true},
+			{ name: `Guild Statistics`, value: `Server member count: ${member.guild.memberCount}`, inline: true})
+		.setColor(functions.randomColor())
 		.setImage(member.avatarURL());
-	channel
-		.find((channel) => channel.id === '1023008971042340908')
-		.send({ embeds: [embed] });
+	member.guild.channels.get('1026953388837056524').send({ embeds: [embed] });
 });
-
-function exportBoard(configuration, context) {
-	context.fillStyle = '#000000';
-	context.font = '30px Arial';
-	var piecesConfig = configuration.pieces;
-	const pieces = {
-		'k': '\u265A',
-		'q': '\u265B',
-		'r': '\u265C',
-		'b': '\u265D',
-		'n': '\u265E',
-		'p': '\u2659',
-		'K': '\u2654',
-		'Q': '\u2655',
-		'R': '\u2656',
-		'B': '\u2657',
-		'N': '\u2658',
-		'P': '\u2659'
-	}
-	var columns = {
-		'A': 0,
-		'B': 30,
-		'C': 60,
-		'D': 90,
-		'E': 120,
-		'F': 150,
-		'G': 180,
-		'H': 210
-	}
-	var rows = {
-		'8': 30,
-		'7': 60,
-		'6': 90,
-		'5': 120,
-		'4': 150,
-		'3': 180,
-		'2': 210,
-		'1': 240
-	}
-
-	for (i in piecesConfig) {
-		var piece = piecesConfig[i]
-		var letter = i.substr(0, 1)
-		var number = i.substr(1, 1)
-		if (piece === 'p') context.strokeText(pieces[piece], columns[letter], rows[number])
-		else context.fillText(pieces[piece], columns[letter], rows[number])
-	}
-	return context
-}
-function drawBoard(configuration) {
-	let canvas = Canvas.createCanvas(240, 240);
-	let context = canvas.getContext('2d');
-
-	for (i = 0; i < 8; i++) {
-		for (j = 0; j < 8; j++) {
-			if ((i + j) % 2 == 0) {
-				context.fillStyle = '#e0e0e0';
-			} else {
-				context.fillStyle = '#909090';
-			}
-			context.fillRect(i * 30, j * 30, 30, 30);
-		}
-	}
-	context = exportBoard(configuration, context)
-	context.font = '12px Arial';
-	context.fillText('8', 2, 10)
-	context.fillText('7', 2, 40)
-	context.fillText('6', 2, 70)
-	context.fillText('5', 2, 100)
-	context.fillText('4', 2, 130)
-	context.fillText('3', 2, 160)
-	context.fillText('2', 2, 190)
-	context.fillText('1', 2, 220)
-	context.fillText('A', 20, 238)
-	context.fillText('B', 50, 238)
-	context.fillText('C', 80, 238)
-	context.fillText('D', 110, 238)
-	context.fillText('E', 140, 238)
-	context.fillText('F', 170, 238)
-	context.fillText('G', 200, 238)
-	context.fillText('H', 230, 238)
-	return [canvas, context]
-}
-function randomColor() {
-	return '#' + Math.floor(Math.random() * 16777215).toString(16);
-}
-function attachIsImage(msgAttach) {
-	var url = msgAttach.url;
-	//True if this url is a png image.
-	return url.indexOf("png", url.length - "png".length /*or 3*/) !== -1;
-}
-function rgbToHex(r, g, b) {
-	return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
-}
-function subStrBetweenChar(string, start, end) {
-	return string.split(start)[1].split(end)[0]
-}
