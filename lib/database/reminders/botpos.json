@@ -11,12 +11,25 @@
       },
       "3": {
         "message": "Hello World",
+        "hearted": true
+      },
+      "4": {
+        "message": "pussy",
+        "hearted": true
+      },
+      "5": {
+        "message": "mamamia",
         "hearted": false
+      },
+      "6": {
+        "message": "dick 2",
+        "hearted": true
       }
     },
     "config": {
-      "interval": 3,
-      "priority": 5
+      "interval": 1,
+      "priority": 3,
+      "next_reminder": 1666651877173
     }
   }
 }

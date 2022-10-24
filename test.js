@@ -1,3 +1,7 @@
+console.log(Date.now() + 3.6e+6)
+
+
+/*
 reminders = {
 	reminders: {},
 	config: {

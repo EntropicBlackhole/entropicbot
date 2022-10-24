@@ -33,8 +33,9 @@ rest.put(Discord.Routes.applicationCommands(config.clientId), { body: commands }
 
 //Deployed all commands
 
-client.once("ready", () => {
+client.once("ready", async () => {
 	console.log(client.user.tag + " is online!");
+	functions.botPosInterval(client)
 });
 
 client.on('interactionCreate', async interaction => {
@@ -82,6 +83,7 @@ client.on('interactionCreate', async interaction => {
 client.login(config.token);
 
 client.on("messageCreate", (message) => {
+	if (message.channel.isDMBased()) return;
 	var serverConfig = JSON.parse(fs.readFileSync("./lib/database/servers/config/servers_config.json"))
 	if (message.content == '$kill') return message.channel.send("Committing sewer slide").then(() => process.exit());
 	if (!([null, undefined, {}].includes(serverConfig[message.guild.id]))) {
@@ -548,12 +550,19 @@ client.on("messageCreate", (message) => {
 })
 
 client.on("guildMemberAdd", (member) => {
-	let embed = new Discord.EmbedBuilder()
-		.setThumbnail(member.guild.iconURL())
-		.addFields(
-			{ name: `Welcome!`, value: `Hello, welcome to ${member.guild.name} <@${member.user.id}>!`, inline: true},
-			{ name: `Guild Statistics`, value: `Server member count: ${member.guild.memberCount}`, inline: true})
-		.setColor(functions.randomColor())
-		.setImage(member.avatarURL());
-	member.guild.channels.get('1026953388837056524').send({ embeds: [embed] });
+	try {
+		let channel = member.guild.channels.cache;
+		let embed = new Discord.EmbedBuilder()
+			.setThumbnail(member.guild.iconURL())
+			.addFields(
+				{ name: `Welcome!`, value: `Hello, welcome to ${member.guild.name} <@${member.user.id}>!`, inline: true },
+				{ name: `Guild Statistics`, value: `Server member count: ${member.guild.memberCount}`, inline: true })
+			.setColor(functions.randomColor())
+			.setImage(member.avatarURL());
+		channel
+			.find((channel) => channel.id === '1026953388837056524')
+			.send({ embeds: [embed] });
+	} catch (e) {
+		console.log(e)
+	}
 });
