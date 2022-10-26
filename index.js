@@ -1,7 +1,8 @@
 const jsChessEngine = require('js-chess-engine')
-const Canvas = require('@napi-rs/canvas')
 const config = require('./lib/database/bot/config.json');
 const functions = require('./lib/database/bot/functions.js')
+const { createCanvas, loadImage, Image } = require('canvas')
+const { drawCard, LinearGradient } = require('discord-welcome-card')
 const fs = require('node:fs');
 const path = require('node:path');
 const Discord = require('discord.js');
@@ -20,6 +21,7 @@ const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('
 client.commands = new Discord.Collection();
 
 // Deploying commands 
+/*
 for (const file of commandFiles) {
 	const filePath = path.join(commandsPath, file);
 	const command = require(filePath);
@@ -30,8 +32,9 @@ const rest = new Discord.REST({ version: '10' }).setToken(config.token);
 rest.put(Discord.Routes.applicationCommands(config.clientId), { body: commands })
 	.then(data => console.log(`Successfully registered ${data.length} application commands.`))
 	.catch(console.error);
-
+*/
 //Deployed all commands
+client.login(config.token);
 
 client.once("ready", async () => {
 	console.log(client.user.tag + " is online!");
@@ -80,9 +83,57 @@ client.on('interactionCreate', async interaction => {
 	}
 });
 
-client.login(config.token);
+client.on("messageCreate", async (message) => {
 
-client.on("messageCreate", (message) => {
+	if (message.content == '$test') {
+		const image = await drawCard({
+			theme: 'code',
+			text: {
+				title: 'Hellloo',
+				text: message.author.tag,
+				subtitle: 'please read the Rules',
+				color: `#88f`,
+			},
+			avatar: {
+				image: message.member.displayAvatarURL({ extension: 'png' }),
+				outlineWidth: 5,
+				outlineColor: '#0fa'
+				
+			},
+			// background: './lib/assets/images/welcome-card/gradient.png',
+			blur: 1,
+			border: true,
+			rounded: true,
+		});
+
+		message.channel.send({ files: [image] });
+
+		return
+		let canvas = createCanvas(640, 360);
+		let ctx = canvas.getContext('2d');
+
+		let background = await loadImage('./lib/assets/images/welcome-card/gradient.png')
+		let avatar = await loadImage(message.member.displayAvatarURL({ extension: 'png' }))
+
+		ctx.drawImage(background, 0, 0, 640, 360);
+		ctx.fillStyle = '#fff'
+		ctx.font = '30px corbel';
+		ctx.fillText(`Member count: ${message.member.guild.memberCount}`, 60, 80)
+		ctx.font = '26px corbel';
+		description = `Welcome ${message.author.username}\nRead the rules and get your reaction roles!`
+		ctx.fillText(functions.wrapText(description, 24), canvas.width / 2, 140)
+		// ctx.fillText(`Welcome ${(message.author.username.length > 17 ? `\n${message.author.username}` : message.author.username)}!`, canvas.width / 2, 140);
+		// ctx.fillText(`Read the rules and get your reaction roles!`, canvas.width / 2, canvas.height / 2);
+
+		ctx.beginPath();
+		ctx.arc(170, 230, 110, 0, Math.PI * 2, true);
+		ctx.closePath();
+		ctx.clip();
+		ctx.drawImage(avatar, 60, 120, 220, 220); // center is 170, 110
+		// fs.writeFileSync('test.png', canvas.toBuffer('image/jpeg'))
+		message.channel.send({ files: [new Discord.AttachmentBuilder(canvas.toBuffer('image/png'))] })
+		return
+	}
 	if (message.channel.isDMBased()) return;
 	var serverConfig = JSON.parse(fs.readFileSync("./lib/database/servers/config/servers_config.json"))
 	if (message.content == '$kill') return message.channel.send("Committing sewer slide").then(() => process.exit());

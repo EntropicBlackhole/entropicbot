@@ -27,9 +27,9 @@
       }
     },
     "config": {
-      "interval": 1,
-      "priority": 3,
-      "next_reminder": 1666651877173
+      "interval": 2,
+      "priority": 2,
+      "next_reminder": 1666820078822
     }
   }
 }

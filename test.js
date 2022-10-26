@@ -1,5 +1,58 @@
-console.log(Date.now() + 3.6e+6)
+const { createCanvas, loadImage } = require('canvas')
+const fs = require('fs'); 
 
+start();
+
+async function start() {
+	let canvas = createCanvas(640, 360);
+	let ctx = canvas.getContext('2d');
+
+	let background = await loadImage('./lib/assets/images/welcome-card/gradient.png')
+	let avatar = await loadImage('./lib/assets/images/welcome-card/neon.png')
+
+	ctx.drawImage(background, 0, 0, 640, 360);
+	ctx.fillStyle = '#fff'
+	ctx.font = '30px corbel';
+	ctx.fillText(`Member count: 24`, 60, 80)
+	ctx.font = '26px corbel';
+	description = `Welcome EntropicBlackhole!\nRead the as sasa as as as assafqe a assa as daf ddafa ddfa rules andd aa get your reaction roles!`
+	ctx.fillText(wrapText(description, 27), canvas.width / 2, 140)
+	// ctx.fillText(`Welcome ${(message.author.username.length > 17 ? `\n${message.author.username}` : message.author.username)}!`, canvas.width / 2, 140);
+	// ctx.fillText(`Read the rules and get your reaction roles!`, canvas.width / 2, canvas.height / 2);
+
+	ctx.beginPath();
+	ctx.arc(170, 230, 110, 0, Math.PI * 2, true);
+	ctx.closePath();
+	ctx.clip();
+	ctx.drawImage(avatar, 60, 120, 220, 220); // center is 170, 110
+	// fs.writeFileSync('test.png', canvas.toBuffer('image/jpeg'))
+	fs.writeFileSync('test.png', canvas.toBuffer('image/png'))
+	return
+}
+
+function wrapText(text, limit) {
+	textArray = text.replace('\n', ' ').split(' ')
+	let out = "";
+	let charCount = 0;
+	for (i of textArray) {
+		charCount += i.length + 1;
+		console.log(charCount, i, i.length)
+		// if (i.includes('\n')) {
+		// 	out += i + ' '
+		// 	charCount = 0;
+		// }
+		if (charCount > limit) {
+			console.log(charCount, i)
+			out += '\n';
+			out += i + " "
+			charCount = 0;
+		}
+		else {
+			out += i + " ";
+		}
+	}
+	return out;
+}
 
 /*
 reminders = {
