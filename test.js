@@ -1,3 +1,9 @@
+var a = "welcome-card";
+var object = { 
+	[a]: "dda"
+}
+console.log(object)
+/*
 const { createCanvas, loadImage } = require('canvas')
 const fs = require('fs'); 
 

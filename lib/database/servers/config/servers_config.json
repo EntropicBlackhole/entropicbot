@@ -15,6 +15,30 @@
       "verificationRole": "1026955695972683777",
       "verifiedMessage": "You got them bitches",
       "nonVerifiedMessage": "You ain't got bitches"
+    },
+    "memberUpdate": {
+      "welcome-card": {
+        "channel": "1026953388837056524",
+        "theme": "circuit",
+        "text": {
+          "title": "Hi there! Welcome to $server!",
+          "text": "$member",
+          "subtitle": "Please read the rules and blacklist!",
+          "color": "#FAFAFA",
+          "font": "comic-sans"
+        },
+        "avatar": {
+          "image": "user",
+          "outlineWidth": 6,
+          "outlineColor": "#FFAAFF",
+          "borderRadius": 0.7,
+          "imageRadius": 0.8
+        },
+        "background": "https://cdn.discordapp.com/ephemeral-attachments/1033436524349493343/1035776841337819146/gradient.png",
+        "blur": true,
+        "border": true,
+        "rounded": true
+      }
     }
   }
 }

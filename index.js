@@ -4,7 +4,7 @@ const functions = require('./lib/database/bot/functions.js')
 const { drawCard } = require('discord-welcome-card')
 const fs = require('node:fs');
 const path = require('node:path');
-const Discord = require('discord.js');
+const Discord = require('discord.js')
 const client = new Discord.Client({
 	intents: [
 		Discord.GatewayIntentBits.Guilds,
@@ -75,7 +75,7 @@ client.on('interactionCreate', async interaction => {
 			client.on('interactionCreate', async interaction => {
 				if (!interaction.isButton()) return;
 				if (interaction.customId == 'show-error') {
-					await interaction.reply({ content: '```' + error + '```', ephemeral: true });
+					await interaction.reply({ content: '```' + error + '```', ephemeral: true })
 				}
 			});
 		}
@@ -85,9 +85,22 @@ client.on('interactionCreate', async interaction => {
 client.on("messageCreate", async (message) => {
 	if (message.content == '$test') {
 		const image = await drawCard({
-			blur: false,
-			border: false,
-			rounded: false,
+			theme: 'circuit',
+			text: {
+				title: 'Hellloo',
+				text: message.member.tag,
+				subtitle: 'please read the Rules',
+				color: `#88f`,
+			},
+			avatar: {
+				image: message.member.displayAvatarURL({ exetnsion: 'png' }),
+				outlineWidth: 5,
+				outlineColor: '#ff3'
+			},
+			background: 'https://i.imgur.com/ea9PB3H.png',
+			blur: 1,
+			border: true,
+			rounded: true,
 		});
 		message.channel.send({ files: [image] });
 		return
@@ -558,20 +571,68 @@ client.on("messageCreate", async (message) => {
 	else if (command == 'kill') return message.channel.send("Committing sewer slide").then(() => process.exit());
 })
 
-client.on("guildMemberAdd", (member) => {
-	try {
+client.on("guildMemberAdd", async (member) => {
+	const serverConfig = JSON.parse(fs.readFileSync('./lib/database/servers/config/servers_config.json'));
+	if (serverConfig[member.guild.id] != undefined && serverConfig[member.guild.id].memberUpdate != undefined) {
+		let cardInfo = serverConfig[member.guild.id].memberUpdate['welcome-card']
+		const sendImage = await drawCard({
+			theme: cardInfo.theme,
+			text: {
+				title: cardInfo.text.title.replace('$member', member.user.tag).replace('$server', member.guild.name),
+				text: cardInfo.text.text.replace('$member', member.user.tag).replace('$server', member.guild.name),
+				subtitle: cardInfo.text.subtitle.replace('$member', member.user.tag).replace('$server', member.guild.name),
+				color: cardInfo.text.color,
+				font: cardInfo.text.font
+			},
+			avatar: {
+				image: (cardInfo.avatar.image == 'user' ? member.displayAvatarURL({ extension: 'png' }) : (cardInfo.image == 'server' ? member.guild.iconURL({ extension: 'png' }) : undefined)),
+				outlineWidth: cardInfo.avatar.outlineWidth,
+				outlineColor: cardInfo.avatar.outlineColor,
+				borderRadius: cardInfo.avatar.borderRadius,
+				imageRadius: cardInfo.avatar.imageRadius
+			},
+			background: (cardInfo.background != undefined) ? cardInfo.background : undefined,
+			blur: cardInfo.blur,
+			border: cardInfo.border,
+			rounded: cardInfo.rounded,
+		});
+		// console.log((cardInfo.background != undefined) ? cardInfo.background : undefined)
 		let channel = member.guild.channels.cache;
-		let embed = new Discord.EmbedBuilder()
-			.setThumbnail(member.guild.iconURL())
-			.addFields(
-				{ name: `Welcome!`, value: `Hello, welcome to ${member.guild.name} <@${member.user.id}>!`, inline: true },
-				{ name: `Guild Statistics`, value: `Server member count: ${member.guild.memberCount}`, inline: true })
-			.setColor(functions.randomColor())
-			.setImage(member.avatarURL());
 		channel
-			.find((channel) => channel.id === '1026953388837056524')
-			.send({ embeds: [embed] });
-	} catch (e) {
-		console.log(e)
+			.find((channel) => channel.id === cardInfo.channel)
+			.send({ files: [sendImage] });
+	}
+});
+
+client.on("guildMemberRemove", async (member) => {
+	const serverConfig = JSON.parse(fs.readFileSync('./lib/database/servers/config/servers_config.json'));
+	if (serverConfig[member.guild.id] != undefined && serverConfig[member.guild.id].memberUpdate != undefined) {
+		let cardInfo = serverConfig[member.guild.id].memberUpdate['goodbye-card']
+		const sendImage = await drawCard({
+			theme: cardInfo.theme,
+			text: {
+				title: cardInfo.text.title.replace('$member', member.user.tag).replace('$server', member.guild.name),
+				text: cardInfo.text.text.replace('$member', member.user.tag).replace('$server', member.guild.name),
+				subtitle: cardInfo.text.subtitle.replace('$member', member.user.tag).replace('$server', member.guild.name),
+				color: cardInfo.text.color,
+				font: cardInfo.text.font
+			},
+			avatar: {
+				image: (cardInfo.avatar.image == 'user' ? member.displayAvatarURL({ extension: 'png' }) : (cardInfo.image == 'server' ? member.guild.iconURL({ extension: 'png' }) : undefined)),
+				outlineWidth: cardInfo.avatar.outlineWidth,
+				outlineColor: cardInfo.avatar.outlineColor,
+				borderRadius: cardInfo.avatar.borderRadius,
+				imageRadius: cardInfo.avatar.imageRadius
+			},
+			background: (cardInfo.background != undefined) ? cardInfo.background : undefined,
+			blur: cardInfo.blur,
+			border: cardInfo.border,
+			rounded: cardInfo.rounded,
+		});
+		// console.log((cardInfo.background != undefined) ? cardInfo.background : undefined)
+		let channel = member.guild.channels.cache;
+		channel
+			.find((channel) => channel.id === cardInfo.channel)
+			.send({ files: [sendImage] });
 	}
 });
