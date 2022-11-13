@@ -47,6 +47,7 @@ client.on('interactionCreate', async interaction => {
 	try {
 		await command.execute(interaction, client);
 	} catch (error) {
+		// if (error == 'Error: Request failed with status code 400') return interaction.channel.send("Your prompt was considered invalid/offensive, please try again.")
 		console.error(error);
 		try {
 			const row = new Discord.ActionRowBuilder()
@@ -106,7 +107,7 @@ client.on("messageCreate", async (message) => {
 		return
 	}
 	if (message.channel.isDMBased()) return;
-	var serverConfig = JSON.parse(fs.readFileSync("./lib/database/servers/config/servers_config.json"))
+	var serverConfig = JSON.parse(fs.readFileSync("./lib/database/misc/servers/config/servers_config.json"))
 	if (message.content == '$kill') return message.channel.send("Committing sewer slide").then(() => process.exit());
 	if (!([null, undefined, {}].includes(serverConfig[message.guild.id]))) {
 		if (serverConfig[message.guild.id].verification.verificationChannel == message.channel.id) {
@@ -572,7 +573,7 @@ client.on("messageCreate", async (message) => {
 })
 
 client.on("guildMemberAdd", async (member) => {
-	const serverConfig = JSON.parse(fs.readFileSync('./lib/database/servers/config/servers_config.json'));
+	const serverConfig = JSON.parse(fs.readFileSync('./lib/database/misc/servers/config/servers_config.json'));
 	if (serverConfig[member.guild.id] != undefined && serverConfig[member.guild.id].memberUpdate != undefined) {
 		let cardInfo = serverConfig[member.guild.id].memberUpdate['welcome-card']
 		const sendImage = await drawCard({
@@ -605,7 +606,7 @@ client.on("guildMemberAdd", async (member) => {
 });
 
 client.on("guildMemberRemove", async (member) => {
-	const serverConfig = JSON.parse(fs.readFileSync('./lib/database/servers/config/servers_config.json'));
+	const serverConfig = JSON.parse(fs.readFileSync('./lib/database/misc/servers/config/servers_config.json'));
 	if (serverConfig[member.guild.id] != undefined && serverConfig[member.guild.id].memberUpdate != undefined) {
 		let cardInfo = serverConfig[member.guild.id].memberUpdate['goodbye-card']
 		const sendImage = await drawCard({
