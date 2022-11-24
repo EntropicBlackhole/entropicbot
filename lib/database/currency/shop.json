@@ -1,0 +1,43 @@
+{
+	"trivia": {
+		"trivia_pass": {
+			"name": "Trivia Pass",
+			"description": "Gives you a pass on trivia night, so you automatically pass one of the questions",
+			"cost": 80
+		},
+		"trivia_start": {
+			"name": "Trivia Start",
+			"description": "You can start a Trivia Night in one server, without the need of a moderator. The trivia night opportunity for that server gets used",
+			"cost": 230
+		}
+	},
+	"chess": {
+		"ai_1": {
+			"name": "Free Chess Move: 1",
+			"description": "Gives you a free chess move, using the AI, on level 1",
+			"cost": 20
+		},
+		"ai_2": {
+			"name": "Free Chess Move: 2",
+			"description": "Gives you a free chess move, using the AI, on level 2",
+			"cost": 60
+		},
+		"ai_3": {
+			"name": "Free Chess Move: 3",
+			"description": "Gives you a free chess move, using the AI, on level 3",
+			"cost": 140
+		},
+		"ai_4": {
+			"name": "Free Chess Move: 4",
+			"description": "Gives you a free chess move, using the AI, on level 4",
+			"cost": 210
+		}
+	},
+	"ttt": {
+		"free_move": {
+			"name": "Free TicTacToe Move",
+			"description": "A free ttt move for you to move",
+			"cost": 100
+		}
+	}
+}

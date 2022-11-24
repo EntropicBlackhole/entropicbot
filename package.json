@@ -17,6 +17,7 @@
     "discord.js": "^14.6.0",
     "js-chess-engine": "^1.0.2",
     "openai": "^3.1.0",
-    "tictactoe-ai": "^1.0.4"
+    "tictactoe-ai": "^1.0.4",
+    "ttt-board": "^1.0.4"
   }
 }

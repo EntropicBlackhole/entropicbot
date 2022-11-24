@@ -1,7 +1,12 @@
 const jsChessEngine = require('js-chess-engine')
+const { Configuration, OpenAIApi } = require("openai");
 const config = require('./lib/database/bot/config.json');
 const functions = require('./lib/database/bot/functions.js')
 const { drawCard } = require('discord-welcome-card')
+const configuration = new Configuration({
+	apiKey: config.openAiToken,
+});
+const openai = new OpenAIApi(configuration);
 const fs = require('node:fs');
 const path = require('node:path');
 const Discord = require('discord.js')
@@ -84,31 +89,10 @@ client.on('interactionCreate', async interaction => {
 });
 
 client.on("messageCreate", async (message) => {
-	if (message.content == '$test') {
-		const image = await drawCard({
-			theme: 'circuit',
-			text: {
-				title: 'Hellloo',
-				text: message.member.tag,
-				subtitle: 'please read the Rules',
-				color: `#88f`,
-			},
-			avatar: {
-				image: message.member.displayAvatarURL({ exetnsion: 'png' }),
-				outlineWidth: 5,
-				outlineColor: '#ff3'
-			},
-			background: 'https://i.imgur.com/ea9PB3H.png',
-			blur: 1,
-			border: true,
-			rounded: true,
-		});
-		message.channel.send({ files: [image] });
-		return
-	}
 	if (message.channel.isDMBased()) return;
 	var serverConfig = JSON.parse(fs.readFileSync("./lib/database/misc/servers/config/servers_config.json"))
 	if (message.content == '$kill') return message.channel.send("Committing sewer slide").then(() => process.exit());
+	else if (message.content == '$reset hyperparadoxical universe') return message.channel.send("ERASING ALL TIMELINE UNITS AND REALITY ANCHOR UNITS... DONE.").then(() => fs.writeFileSync('./lib/database/misc/convos/conversations.json', JSON.stringify({}, null, 2)));
 	if (!([null, undefined, {}].includes(serverConfig[message.guild.id]))) {
 		if (serverConfig[message.guild.id].verification.verificationChannel == message.channel.id) {
 			if (message.content.includes(serverConfig[message.guild.id].verification.verificationCode) && !message.author.bot) {
@@ -118,6 +102,31 @@ client.on("messageCreate", async (message) => {
 			}
 			else if (!(message.content.includes(serverConfig[message.guild.id].verification.verificationCode)) && !message.author.bot) return message.channel.send(serverConfig[message.guild.id].verification.nonVerifiedMessage).then(msg => setTimeout(() => msg.delete(), 2000)).then(setTimeout(() => message.delete(), 2000))
 		}
+	}
+	return
+	if (message.author.id != client.user.id) {
+		let conversations = JSON.parse(fs.readFileSync('./lib/database/misc/convos/conversations.json'))
+		if (message.content == '$output messages') return message.reply(functions.shortenText(conversations[message.channel.id], "\n", 2000))
+		if (([null, undefined, {}, ""].includes(conversations[message.channel.id]))) {
+			conversations[message.channel.id] = `The following conversation happens through the members in a Discord server. You, ${client.user.username}, are a Discord bot, built with GPT-3, you are happy, innovative, clever, funny and cheerful:\n\n`
+			fs.writeFileSync('./lib/database/misc/convos/conversations.json', JSON.stringify(conversations, null, 2));
+		}
+		conversations[message.channel.id] += `${message.author.username}:\n\n${message.content}\n${client.user.username}: `
+		fs.writeFileSync('./lib/database/misc/convos/conversations.json', JSON.stringify(conversations, null, 2));
+		const response = await openai.create({
+			model: "text-davinci-002",
+			prompt: conversations[message.channel.id],
+			temperature: 0.9,
+			max_tokens: 150,
+			top_p: 1,
+			frequency_penalty: 1.7,
+			presence_penalty: 0.6,
+			best_of: 1
+		});
+		conversations = JSON.parse(fs.readFileSync('./lib/database/misc/convos/conversations.json'))
+		conversations[message.channel.id] += `${response.data.choices[0].text}\n`
+		fs.writeFileSync('./lib/database/misc/convos/conversations.json', JSON.stringify(conversations, null, 2));
+		return message.reply(response.data.choices[0].text)
 	}
 	return
 	if (message.author.bot || !message.content.startsWith(config.prefix)) return;
