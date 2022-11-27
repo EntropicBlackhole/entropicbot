@@ -16,7 +16,8 @@ const client = new Discord.Client({
 		Discord.GatewayIntentBits.GuildMessages,
 		Discord.GatewayIntentBits.GuildMembers,
 		Discord.GatewayIntentBits.MessageContent,
-		Discord.GatewayIntentBits.DirectMessages
+		Discord.GatewayIntentBits.DirectMessages,
+		Discord.GatewayIntentBits.GuildMessageReactions
 	]
 });
 const commands = [];

@@ -808,134 +808,134 @@
 		{
 			"question": "What are the three stars in a straight line?",
 			"answers": {
-				"1": false,
-				"2": false,
-				"3": false,
-				"Orion’s belt": true
+				"Orion's shoe": false,
+				"Apollo's socks": false,
+				"Artemis' bow": false,
+				"Orion's belt": true
 			}
 		},
 		{
 			"question": "Which mythical creature is half an eagle and half a lion?",
 			"answers": {
-				"1": false,
-				"2": false,
-				"3": false,
+				"A Skinwalker": false,
+				"The Wendigo": false,
+				"An Eagion": false,
 				"A Griffin": true
 			}
 		},
 		{
 			"question": "What is the name of the dog that always chased Tom in Tom & Jerry?",
 			"answers": {
-				"1": false,
-				"2": false,
-				"3": false,
+				"Bolt": false,
+				"Barky": false,
+				"Thunderbelt": false,
 				"Spike": true
 			}
 		},
 		{
 			"question": "After which holiday do you never wear white?",
 			"answers": {
-				"1": false,
-				"2": false,
-				"3": false,
+				"Christmas": false,
+				"D-Day": false,
+				"National Leprachorn Association Day": false,
 				"Labor Day": true
 			}
 		},
 		{
 			"question": "What language is most commonly spoken in China?",
 			"answers": {
-				"1": false,
-				"2": false,
-				"3": false,
-				"Mandarin (No, it’s not “Chinese”)": true
+				"Chinese": false,
+				"Taiwanese": false,
+				"Hong Kongnese": false,
+				"Mandarin": true
 			}
 		},
 		{
 			"question": "Which animal can turn their heads a maximum of 270 degrees?",
 			"answers": {
-				"1": false,
-				"2": false,
-				"3": false,
+				"Stolas": true,
+				"Ohio": false,
+				"Ohio 2: Electric Boogaloo": false,
 				"Owls": true
 			}
 		},
 		{
 			"question": "Which bird is known to eat dead animals?",
 			"answers": {
-				"1": false,
-				"2": false,
-				"3": false,
+				"Cultures": false,
+				"Pultrues": false,
+				"Chickens": false,
 				"Vultures": true
 			}
 		},
 		{
 			"question": "Where does the Pope live?",
 			"answers": {
-				"1": false,
-				"2": false,
-				"3": false,
+				"In his house": true,
+				"On Earth": true,
+				"Vatican Nation": false,
 				"Vatican City": true
 			}
 		},
 		{
 			"question": "What is the name of a baby kangaroo?",
 			"answers": {
-				"1": false,
-				"2": false,
-				"3": false,
+				"A Jackalope": false,
+				"A Roo": false,
+				"A Kanga": false,
 				"A Joey": true
 			}
 		},
 		{
 			"question": "In which US city did Jazz start?",
 			"answers": {
-				"1": false,
-				"2": false,
-				"3": false,
+				"New Mexico": false,
+				"New York": false,
+				"O. h. i. o.": false,
 				"New Orleans": true
 			}
 		},
 		{
 			"question": "What does the acronym TTYL stand for?",
 			"answers": {
-				"1": false,
-				"2": false,
-				"3": false,
+				"Thanks Tom, you lost": false,
+				"Tampons true Yhant L.": false,
+				"By it's supports at the bottom of T, T Y, and it's foot on the L": false,
 				"Talk to you later": true
 			}
 		},
 		{
 			"question": "What year did World War 2 begin?",
 			"answers": {
-				"1": false,
-				"2": false,
-				"3": false,
+				"After WW1": false,
+				"1945": false,
+				"1933": false,
 				"1939": true
 			}
 		},
 		{
 			"question": "How far away is the Sun from the Earth?",
 			"answers": {
-				"1": false,
-				"2": false,
-				"3": false,
+				"Very with a capital V": true,
+				"More than 2 miles": true,
+				"More than 151 million km": false,
 				"150 million km or 93 million miles": true
 			}
 		},
 		{
 			"question": "Who is the messenger of the Greek Gods?",
 			"answers": {
-				"1": false,
-				"2": false,
-				"3": false,
+				"Herpes": false,
+				"Hearls": false,
+				"Perry the platypus": true,
 				"Hermes": true
 			}
 		},
 		{
 			"question": "How many chambers does the heart have?",
 			"answers": {
-				"1": false,
-				"2": false,
+				"It doesn't": false,
+				"21": false,
 				"3": false,
 				"4": true
 			}
@@ -943,118 +943,118 @@
 		{
 			"question": "Who discovered Radium?",
 			"answers": {
-				"1": false,
-				"2": false,
-				"3": false,
+				"The circle": false,
+				"Amber Sally": false,
+				"Teddy Duncan": false,
 				"Marie Curie": true
 			}
 		},
 		{
 			"question": "Which country won the most FIFA World Cups?",
 			"answers": {
-				"1": false,
-				"2": false,
-				"3": false,
+				"Argentina": false,
+				"France": false,
+				"The ball": true,
 				"Brazil": true
 			}
 		},
 		{
 			"question": "What is the smallest planet in our solar system?",
 			"answers": {
-				"1": false,
-				"2": false,
-				"3": false,
+				"Your pp": false,
+				"Your dick": false,
+				"Kalifox": false,
 				"Mercury": true
 			}
 		},
 		{
 			"question": "What is the color of a sapphire?",
 			"answers": {
-				"1": false,
-				"2": false,
-				"3": false,
+				"sky blue": false,
+				"light blue": false,
+				"dark blue": false,
 				"blue": true
 			}
 		},
 		{
 			"question": "Which river runs through London?",
 			"answers": {
-				"1": false,
-				"2": false,
-				"3": false,
+				"River Euphrates": false,
+				"River Tigris": false,
+				"River Nile": false,
 				"River Thames": true
 			}
 		},
 		{
 			"question": "What is a group of crows called?",
 			"answers": {
-				"1": false,
-				"2": false,
-				"3": false,
+				"A batch": false,
+				"A crowbar": false,
+				"A kelp": false,
 				"A murder": true
 			}
 		},
 		{
 			"question": "Where was Jesus born?",
 			"answers": {
-				"1": false,
-				"2": false,
-				"3": false,
+				"Israel": false,
+				"Jerusalem": false,
+				"Not on the moon that's for sure": true,
 				"Palestine": true
 			}
 		},
 		{
 			"question": "Which is the tallest building in the world?",
 			"answers": {
-				"1": false,
-				"2": false,
-				"3": false,
+				"Mia Khalifa": false,
+				"Your molm": true,
+				"Bujr Khalifa": false,
 				"Burj Khalifa": true
 			}
 		},
 		{
 			"question": "Which country is Leonardo Da Vinci from?",
 			"answers": {
-				"1": false,
-				"2": false,
-				"3": false,
+				"France": false,
+				"San Marino": false,
+				"The papal states": false,
 				"Italy": true
 			}
 		},
 		{
 			"question": "Who wrote “To Kill a Mockingbird”?",
 			"answers": {
-				"1": false,
-				"2": false,
-				"3": false,
+				"Stephen Hawking": false,
+				"The Living Tombstones": false,
+				"Bruce Lee": false,
 				"Harper Lee": true
 			}
 		},
 		{
 			"question": "Who did David fight in the bible?",
 			"answers": {
-				"1": false,
-				"2": false,
-				"3": false,
+				"A lion": false,
+				"Possibly someone who tried to rob him": true,
+				"Gardevoir": false,
 				"Goliath": true
 			}
 		},
 		{
 			"question": "Who painted the ceiling of the Sistine Chapel?",
 			"answers": {
-				"1": false,
-				"2": false,
-				"3": false,
+				"Mammamia the spagetth": false,
+				"Marie Curie": false,
+				"Abraham Lincoln": false,
 				"Michelangelo": true
 			}
 		},
 		{
 			"question": "Who was the first James Bond?",
 			"answers": {
-				"1": false,
-				"2": false,
-				"3": false,
-				"Sean Connery": true
+				"Bond, James Bond": false,
+				"Parker, Peter Parker": false,
+				"Jackson, Michael Jackson": false,
+				"Connery, Sean Connery": true
 			}
 		}
 	]
