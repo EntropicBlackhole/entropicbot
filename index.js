@@ -583,6 +583,7 @@ client.on("messageCreate", async (message) => {
 })
 
 client.on("guildMemberAdd", async (member) => {
+	return
 	const serverConfig = JSON.parse(fs.readFileSync('./lib/database/misc/servers/config/servers_config.json'));
 	if (serverConfig[member.guild.id] != undefined && serverConfig[member.guild.id].memberUpdate != undefined) {
 		let cardInfo = serverConfig[member.guild.id].memberUpdate['welcome-card']
@@ -616,6 +617,7 @@ client.on("guildMemberAdd", async (member) => {
 });
 
 client.on("guildMemberRemove", async (member) => {
+	return
 	const serverConfig = JSON.parse(fs.readFileSync('./lib/database/misc/servers/config/servers_config.json'));
 	if (serverConfig[member.guild.id] != undefined && serverConfig[member.guild.id].memberUpdate != undefined) {
 		let cardInfo = serverConfig[member.guild.id].memberUpdate['goodbye-card']
