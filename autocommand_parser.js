@@ -1,5 +1,5 @@
-let squareBracketsRegex = /\[.+?\]/g
-let angleBracketsRegex = /<.+?>/g
+let squareBracketsRegex = /(?<=\[).*?(?=\])/g
+let angleBracketsRegex = /(?<=\<).*?(?=\>)/g
 let string = process.argv[2]
 
 // "shop [buy <item> <amount?>, list, sell <item>], transfer <user> <amount>, balance <user?>"
@@ -25,15 +25,15 @@ for (i of string.split(',')) {
 				block += `if (subcommand == '${subcommand}') {\n`
 				main += `.addSubcommand(subcommand => subcommand\n.setName('${subcommand}')\n.setDescription('')\n`
 				for (k of items) {
-					block += `let ${k.match(/(?<=\<).*?(?=\>)/g)[0].replace('?', '') } = interaction.options.get('${k.match(/(?<=\<).*?(?=\>)/g)[0].replace('?', '') }');\n`
-					main += `.addOption(option => option\n.setName('${k.match(/(?<=\<).*?(?=\>)/g)[0].replace('?', '') }')\n.setDescription(''))\n`
+					block += `let ${k.match(/(?<=\<).*?(?=\>)/g)[0].replace('?', '')} = interaction.options.get('${k.match(/(?<=\<).*?(?=\>)/g)[0].replace('?', '')}');\n`
+					main += `.addOption(option => option\n.setName('${k.match(/(?<=\<).*?(?=\>)/g)[0].replace('?', '')}')\n.setDescription(''))\n`
 					if (!k.match(/(?<=\<).*?(?=\>)/g)[0].includes('?')) {
 						main = main.substring(0, main.length - 2)
 						main += `\n.setRequired(true))\n`
 					}
 					else {
 						block = block.substring(0, block.length - 2)
-						block += ` ? interaction.options.get('${k.match(/(?<=\<).*?(?=\>)/g)[0].replace('?', '') }') : 1;\n`
+						block += ` ? interaction.options.get('${k.match(/(?<=\<).*?(?=\>)/g)[0].replace('?', '')}') : 1;\n`
 					}
 				}
 				main = main.trim()
@@ -41,7 +41,7 @@ for (i of string.split(',')) {
 				block += '}\n'
 			}
 		}
-		main = main.substring(0, main.length-1)
+		main = main.substring(0, main.length - 1)
 		main += ')\n'
 		block += '}\n'
 	}
@@ -66,7 +66,7 @@ for (i of string.split(',')) {
 		main += ')\n'
 		block += '}\n'
 	}
-	
+
 }
 main = main.trim()
 main += ','

@@ -18,6 +18,10 @@ const client = new Discord.Client({
 		Discord.GatewayIntentBits.MessageContent,
 		Discord.GatewayIntentBits.DirectMessages,
 		Discord.GatewayIntentBits.GuildMessageReactions
+	],
+	partials: [
+		Discord.Partials.Channel,
+		Discord.Partials.Message
 	]
 });
 const commands = [];
@@ -90,45 +94,62 @@ client.on('interactionCreate', async interaction => {
 });
 
 client.on("messageCreate", async (message) => {
-	if (message.channel.isDMBased()) return;
-	var serverConfig = JSON.parse(fs.readFileSync("./lib/database/misc/servers/config/servers_config.json"))
-	if (message.content == '$kill') return message.channel.send("Committing sewer slide").then(() => process.exit());
-	else if (message.content == '$reset hyperparadoxical universe') return message.channel.send("ERASING ALL TIMELINE UNITS AND REALITY ANCHOR UNITS... DONE.").then(() => fs.writeFileSync('./lib/database/misc/convos/conversations.json', JSON.stringify({}, null, 2)));
-	if (!([null, undefined, {}].includes(serverConfig[message.guild.id]))) {
-		if (serverConfig[message.guild.id].verification.verificationChannel == message.channel.id) {
-			if (message.content.includes(serverConfig[message.guild.id].verification.verificationCode) && !message.author.bot) {
-				role = message.guild.roles.cache.find(role => role.id === serverConfig[message.guild.id].verification.verificationRole);
-				message.member.roles.add(role);
-				message.channel.send(serverConfig[message.guild.id].verification.verifiedMessage).then(msg => setTimeout(() => msg.delete(), 2000)).then(setTimeout(() => message.delete(), 2000))
+	// console.log(message)
+	if (message.channel.isDMBased()) {
+		// console.log(message.author.id)
+		if (message.author.id != '841822347932598303' && message.author.id != client.user.id) {
+			let conversations = JSON.parse(fs.readFileSync('./lib/database/misc/convos/conversations.json'))
+			if (message.content == '$output messages') return message.reply(functions.shortenText(conversations[message.author.id], "\n", 2000))
+			if (([null, undefined, {}, ""].includes(conversations[message.author.id]))) {
+				conversations[message.author.id] = [
+					{ role: "system", prompt: `The following conversation happens through you and a user, called Sunny. You, ${client.user.username}, are a Discord bot, built with GPT-3, you are happy, innovative, clever, funny and cheerful` }
+				]
+				fs.writeFileSync('./lib/database/misc/convos/conversations.json', JSON.stringify(conversations, null, 2));
 			}
-			else if (!(message.content.includes(serverConfig[message.guild.id].verification.verificationCode)) && !message.author.bot) return message.channel.send(serverConfig[message.guild.id].verification.nonVerifiedMessage).then(msg => setTimeout(() => msg.delete(), 2000)).then(setTimeout(() => message.delete(), 2000))
-		}
-	}
-	return
-	if (message.author.id != client.user.id) {
-		let conversations = JSON.parse(fs.readFileSync('./lib/database/misc/convos/conversations.json'))
-		if (message.content == '$output messages') return message.reply(functions.shortenText(conversations[message.channel.id], "\n", 2000))
-		if (([null, undefined, {}, ""].includes(conversations[message.channel.id]))) {
-			conversations[message.channel.id] = `The following conversation happens through the members in a Discord server. You, ${client.user.username}, are a Discord bot, built with GPT-3, you are happy, innovative, clever, funny and cheerful:\n\n`
+			conversations[message.author.id].push({ role: 'user', prompt: message.content })
+			let promptToPass = "";
+			if (conversations[message.author.id].length > 10) conversations[message.author.id].shift()
+			for (let prompt of conversations[message.author.id]) {
+				if (prompt.role == 'system') promptToPass += prompt.prompt + '\n\n'
+				else if (prompt.role == 'user') promptToPass += message.author.username + ": \"" + prompt.prompt + "\"\n\n"
+				else if (prompt.role == 'bot') promptToPass += client.user.username + ": \"" + prompt.prompt + "\"\n\n"
+			}
+			promptToPass += client.user.username + ": "
+			// fs.writeFileSync('./lib/database/misc/convos/conversations.json', JSON.stringify(conversations, null, 2));
+			console.log(promptToPass)
+			// return
+			const response = await openai.createCompletion({
+				model: "text-davinci-003",
+				prompt: promptToPass,
+				temperature: 0.9,
+				max_tokens: 50,
+				top_p: 1,
+				frequency_penalty: 1.7,
+				presence_penalty: 0.6,
+				best_of: 1
+			});
+			conversations = JSON.parse(fs.readFileSync('./lib/database/misc/convos/conversations.json'))
+			conversations[message.author.id].push({ role: "bot", prompt: response.data.choices[0].text })
 			fs.writeFileSync('./lib/database/misc/convos/conversations.json', JSON.stringify(conversations, null, 2));
+			return message.reply(response.data.choices[0].text)
 		}
-		conversations[message.channel.id] += `${message.author.username}:\n\n${message.content}\n${client.user.username}: `
-		fs.writeFileSync('./lib/database/misc/convos/conversations.json', JSON.stringify(conversations, null, 2));
-		const response = await openai.create({
-			model: "text-davinci-002",
-			prompt: conversations[message.channel.id],
-			temperature: 0.9,
-			max_tokens: 150,
-			top_p: 1,
-			frequency_penalty: 1.7,
-			presence_penalty: 0.6,
-			best_of: 1
-		});
-		conversations = JSON.parse(fs.readFileSync('./lib/database/misc/convos/conversations.json'))
-		conversations[message.channel.id] += `${response.data.choices[0].text}\n`
-		fs.writeFileSync('./lib/database/misc/convos/conversations.json', JSON.stringify(conversations, null, 2));
-		return message.reply(response.data.choices[0].text)
 	}
+	else {
+		var serverConfig = JSON.parse(fs.readFileSync("./lib/database/misc/servers/config/servers_config.json"))
+		if (message.content == '$kill') return message.channel.send("Committing sewer slide").then(() => process.exit());
+		else if (message.content == '$reset hyperparadoxical universe') return message.channel.send("ERASING ALL TIMELINE UNITS AND REALITY ANCHOR UNITS... DONE.").then(() => fs.writeFileSync('./lib/database/misc/convos/conversations.json', JSON.stringify({}, null, 2)));
+		if (!([null, undefined, {}].includes(serverConfig[message.guild.id]))) {
+			if (serverConfig[message.guild.id].verification.verificationChannel == message.channel.id) {
+				if (message.content.includes(serverConfig[message.guild.id].verification.verificationCode) && !message.author.bot) {
+					role = message.guild.roles.cache.find(role => role.id === serverConfig[message.guild.id].verification.verificationRole);
+					message.member.roles.add(role);
+					message.channel.send(serverConfig[message.guild.id].verification.verifiedMessage).then(msg => setTimeout(() => msg.delete(), 2000)).then(setTimeout(() => message.delete(), 2000))
+				}
+				else if (!(message.content.includes(serverConfig[message.guild.id].verification.verificationCode)) && !message.author.bot) return message.channel.send(serverConfig[message.guild.id].verification.nonVerifiedMessage).then(msg => setTimeout(() => msg.delete(), 2000)).then(setTimeout(() => message.delete(), 2000))
+			}
+		}
+	}
+	// return
 	return
 	if (message.author.bot || !message.content.startsWith(config.prefix)) return;
 	const args = message.content.slice(prefix.length).trim().split(/ +/);
