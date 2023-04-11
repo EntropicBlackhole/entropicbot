@@ -97,7 +97,7 @@ client.on("messageCreate", async (message) => {
 	// console.log(message)
 	if (message.channel.isDMBased()) {
 		// console.log(message.author.id)
-		if (message.author.id != '841822347932598303' && message.author.id != client.user.id) {
+		if (message.author.id == '841822347932598303' && message.author.id != client.user.id) {
 			let conversations = JSON.parse(fs.readFileSync('./lib/database/misc/convos/conversations.json'))
 			if (message.content == '$output messages') return message.reply(functions.shortenText(conversations[message.author.id], "\n", 2000))
 			if (([null, undefined, {}, ""].includes(conversations[message.author.id]))) {
