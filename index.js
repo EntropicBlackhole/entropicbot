@@ -2,11 +2,19 @@ const jsChessEngine = require('js-chess-engine')
 const { Configuration, OpenAIApi } = require("openai");
 const config = require('./lib/database/bot/config.json');
 const functions = require('./lib/database/bot/functions.js')
+const FireBaseApp = require('firebase-admin/app');
+const FireStore = require('firebase-admin/firestore');
+// const { getFirestore, Timestamp, FieldValue } = 
 const { drawCard } = require('discord-welcome-card')
 const configuration = new Configuration({
 	apiKey: config.openAiToken,
 });
 const openai = new OpenAIApi(configuration);
+// FireBaseApp.initializeApp({
+// 	credential: FireBaseApp.cert(config.firebaseKey)
+// });
+
+// const db = FireStore.getFirestore();
 const fs = require('node:fs');
 const path = require('node:path');
 const Discord = require('discord.js')
@@ -30,7 +38,14 @@ const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('
 client.commands = new Discord.Collection();
 
 // Deploying commands 
-// /*
+// const docRef = db.collection('users').doc('alovelace');
+
+// docRef.set({
+// 	first: 'Ada',
+// 	last: 'Lovelace',
+// 	born: 1815
+// });
+
 for (const file of commandFiles) {
 	const filePath = path.join(commandsPath, file);
 	const command = require(filePath);
@@ -94,44 +109,68 @@ client.on('interactionCreate', async interaction => {
 });
 
 client.on("messageCreate", async (message) => {
-	// console.log(message)
 	if (message.channel.isDMBased()) {
-		// console.log(message.author.id)
-		if (message.author.id == '841822347932598303' && message.author.id != client.user.id) {
+		memberNames = {
+			'841822347932598303': "Sunny",
+			'708026434660204625': "Krissy",
+			'592841797697536011': "Russia",
+			'1095530496076824678': "Roo",
+			'532376544128008194': "MooseyGamer69",
+			'719674119309754430': "Alex"
+		}
+		if (Object.keys(memberNames).includes(message.author.id) && message.author.id != client.user.id) {
 			let conversations = JSON.parse(fs.readFileSync('./lib/database/misc/convos/conversations.json'))
 			if (message.content == '$output messages') return message.reply(functions.shortenText(conversations[message.author.id], "\n", 2000))
 			if (([null, undefined, {}, ""].includes(conversations[message.author.id]))) {
-				conversations[message.author.id] = [
-					{ role: "system", prompt: `The following conversation happens through you and a user, called Sunny. You, ${client.user.username}, are a Discord bot, built with GPT-3, you are happy, innovative, clever, funny and cheerful` }
-				]
+				conversations[message.author.id] = [{
+					role: "system",
+					prompt: `The following conversation happens through you and a user, called ${memberNames[message.author.id]} You, ${client.user.username}, are a Discord bot, built with GPT - 3, you are happy, innovative, clever, funny and cheerful, if a user requests to send a message to someone else, use this map: \`{'Sunny': "841822347932598303", 'Krissy': "708026434660204625", 'Russia': "592841797697536011", 'Roo': "1095530496076824678", 'MooseyGamer69': "532376544128008194", 'Alex': "719674119309754430"}\`, each value there is a user ID, output this: "$code$ sendMessageToUser(userID, message)" with the first parameter in the sendMessageToUser function being the user ID from the map, and the second parameter being the message the user wants to send to the other person, make sure to escape characters inside the message that could cause syntax errors`
+				}]
 				fs.writeFileSync('./lib/database/misc/convos/conversations.json', JSON.stringify(conversations, null, 2));
 			}
-			conversations[message.author.id].push({ role: 'user', prompt: message.content })
+			conversations[message.author.id].push({
+				role: 'user', prompt: message.content
+			})
 			let promptToPass = "";
-			if (conversations[message.author.id].length > 10) conversations[message.author.id].shift()
+			if (conversations[message.author.id].length > 15) {
+				conversations[message.author.id].shift()
+				conversations[message.author.id].shift()
+			}
 			for (let prompt of conversations[message.author.id]) {
 				if (prompt.role == 'system') promptToPass += prompt.prompt + '\n\n'
-				else if (prompt.role == 'user') promptToPass += message.author.username + ": \"" + prompt.prompt + "\"\n\n"
+				else if (prompt.role == 'user') promptToPass += memberNames[message.author.id] + ": \"" + prompt.prompt + "\"\n\n"
 				else if (prompt.role == 'bot') promptToPass += client.user.username + ": \"" + prompt.prompt + "\"\n\n"
 			}
 			promptToPass += client.user.username + ": "
-			// fs.writeFileSync('./lib/database/misc/convos/conversations.json', JSON.stringify(conversations, null, 2));
-			console.log(promptToPass)
-			// return
+			fs.writeFileSync('./lib/database/misc/convos/conversations.json', JSON.stringify(conversations, null, 2));
 			const response = await openai.createCompletion({
 				model: "text-davinci-003",
 				prompt: promptToPass,
-				temperature: 0.9,
-				max_tokens: 50,
+				temperature: 0.8,
+				max_tokens: 170,
 				top_p: 1,
-				frequency_penalty: 1.7,
-				presence_penalty: 0.6,
+				frequency_penalty: 0.9,
+				presence_penalty: 1,
 				best_of: 1
 			});
+			let AIResponse = response.data.choices[0].text.trim()
+			console.log(AIResponse)
+			let tempResponse = AIResponse.split('')
+			if (tempResponse[0] == "\"") tempResponse.shift();
+			if (tempResponse[tempResponse.length - 1] == "\"") tempResponse.pop();
+			AIResponse = tempResponse.join('');
+			console.log(AIResponse)
+			if (AIResponse.startsWith('$code$')) {
+				//This means to execute a function
+				eval(AIResponse.replace('$code$', ''))
+				AIResponse = "Done!"
+			}
 			conversations = JSON.parse(fs.readFileSync('./lib/database/misc/convos/conversations.json'))
-			conversations[message.author.id].push({ role: "bot", prompt: response.data.choices[0].text })
+			conversations[message.author.id].push({
+				role: "bot", prompt: AIResponse
+			})
 			fs.writeFileSync('./lib/database/misc/convos/conversations.json', JSON.stringify(conversations, null, 2));
-			return message.reply(response.data.choices[0].text)
+			return message.reply(AIResponse)
 		}
 	}
 	else {
@@ -149,7 +188,6 @@ client.on("messageCreate", async (message) => {
 			}
 		}
 	}
-	// return
 	return
 	if (message.author.bot || !message.content.startsWith(config.prefix)) return;
 	const args = message.content.slice(prefix.length).trim().split(/ +/);
@@ -670,3 +708,8 @@ client.on("guildMemberRemove", async (member) => {
 			.send({ files: [sendImage] });
 	}
 });
+
+function sendMessageToUser(userID, message) {
+	console.log(message)
+	return client.users.send(userID, message);
+}
