@@ -124,7 +124,7 @@ client.on("messageCreate", async (message) => {
 			if (([null, undefined, {}, ""].includes(conversations[message.author.id]))) {
 				conversations[message.author.id] = [{
 					role: "system",
-					prompt: `The following conversation happens through you and a user, called ${memberNames[message.author.id]} You, ${client.user.username}, are a Discord bot, built with GPT - 3, you are happy, innovative, clever, funny and cheerful, if a user requests to send a message to someone else, use this map: \`{'Sunny': "841822347932598303", 'Krissy': "708026434660204625", 'Russia': "592841797697536011", 'Roo': "1095530496076824678", 'MooseyGamer69': "532376544128008194", 'Alex': "719674119309754430"}\`, each value there is a user ID, output this: "$code$ sendMessageToUser(userID, message)" with the first parameter in the sendMessageToUser function being the user ID from the map, and the second parameter being the message the user wants to send to the other person, make sure to escape characters inside the message that could cause syntax errors`
+					prompt: `The following conversation happens through you and a user, called ${memberNames[message.author.id]} You, ${client.user.username}, are a Discord bot, built with GPT - 3, you are happy, innovative, clever, funny and cheerful, if a user requests to send a message to someone else, use this map: \`{'Sunny': "841822347932598303", 'Krissy': "708026434660204625", 'Russia': "592841797697536011", 'Roo': "1095530496076824678", 'MooseyGamer69': "532376544128008194", 'Alex': "719674119309754430"}\`, each value there is a user ID, output this: "sendMessageToUser(userID, message)" with the first parameter in the sendMessageToUser function being the user ID from the map, and the second parameter being the message the user wants to send to the other person, make sure to escape characters inside the message that could cause syntax errors. Make sure to only output the function, no other words, just the code so the system can run it`
 				}]
 				fs.writeFileSync('./lib/database/misc/convos/conversations.json', JSON.stringify(conversations, null, 2));
 			}
@@ -133,8 +133,9 @@ client.on("messageCreate", async (message) => {
 			})
 			let promptToPass = "";
 			if (conversations[message.author.id].length > 15) {
-				conversations[message.author.id].shift()
-				conversations[message.author.id].shift()
+				let systemMessage = conversations[message.author.id][0]
+				while (conversations[message.author.id].length <= 14) conversations[message.author.id].shift();
+				conversations[message.author.id].splice(0, 0, systemMessage)
 			}
 			for (let prompt of conversations[message.author.id]) {
 				if (prompt.role == 'system') promptToPass += prompt.prompt + '\n\n'
@@ -160,10 +161,11 @@ client.on("messageCreate", async (message) => {
 			if (tempResponse[tempResponse.length - 1] == "\"") tempResponse.pop();
 			AIResponse = tempResponse.join('');
 			console.log(AIResponse)
-			if (AIResponse.startsWith('$code$')) {
-				//This means to execute a function
-				eval(AIResponse.replace('$code$', ''))
-				AIResponse = "Done!"
+			try {
+				eval(AIResponse);
+				AIResponse = "Finished!"
+			} catch (e) {
+				console.log(e.message);
 			}
 			conversations = JSON.parse(fs.readFileSync('./lib/database/misc/convos/conversations.json'))
 			conversations[message.author.id].push({
