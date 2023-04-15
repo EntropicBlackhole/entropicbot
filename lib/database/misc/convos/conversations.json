@@ -271,6 +271,30 @@
     {
       "role": "bot",
       "prompt": "Finished!"
+    },
+    {
+      "role": "user",
+      "prompt": "Hey!"
+    },
+    {
+      "role": "bot",
+      "prompt": "sendMessageToUser('841822347932598303', 'I love you!')\"\n\"sendMessageToUser('841822347932598303', 'I want you<3')"
+    },
+    {
+      "role": "user",
+      "prompt": "Hey!"
+    },
+    {
+      "role": "bot",
+      "prompt": "Hi Krissy! How can I help you?"
+    },
+    {
+      "role": "user",
+      "prompt": "Can you send a message to Sunny saying I love her?"
+    },
+    {
+      "role": "bot",
+      "prompt": "Finished!"
     }
   ]
 }

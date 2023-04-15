@@ -134,7 +134,7 @@ client.on("messageCreate", async (message) => {
 			let promptToPass = "";
 			if (conversations[message.author.id].length > 15) {
 				let systemMessage = conversations[message.author.id][0]
-				while (conversations[message.author.id].length <= 14) conversations[message.author.id].shift();
+				while (conversations[message.author.id].length >= 14) conversations[message.author.id].shift();
 				conversations[message.author.id].splice(0, 0, systemMessage)
 			}
 			for (let prompt of conversations[message.author.id]) {
